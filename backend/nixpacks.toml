@@ -1,0 +1,17 @@
+[phases.setup]
+nixPkgs = [
+  "php83",
+  "php83Packages.composer",
+  "php83Extensions.pdo_pgsql",
+  "php83Extensions.pgsql",
+  "php83Extensions.redis",
+  "php83Extensions.bcmath",
+  "php83Extensions.gd",
+  "php83Extensions.intl",
+  "php83Extensions.zip"
+]
+
+[phases.build]
+cmds = [
+  "composer install --no-dev --optimize-autoloader --no-interaction"
+]

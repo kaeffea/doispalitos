@@ -1,0 +1,93 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #F8F7F4;
+  --bg-subtle: #F0EFEA;
+  --border: #E5E4DC;
+  --text: #141416;
+  --text-muted: #737377;
+  --yellow: #F5DC55;
+  --yellow-hover: #E5CB3C;
+}
+
+.dark {
+  --bg: #0F1012;
+  --bg-subtle: #16171B;
+  --border: #23242A;
+  --text: #EDEDED;
+  --text-muted: #8A8B94;
+  --yellow: #F5DC55;
+  --yellow-hover: #E2C942;
+}
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+html, body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Remove ugly native number spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Custom minimal focus ring */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--yellow) !important;
+}
+
+/* Custom Minimal Rounded Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(161, 161, 170, 0.5);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(113, 113, 122, 0.8);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(63, 63, 70, 0.6);
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(113, 113, 122, 0.8);
+}
+
+/* Fix Leaflet dark mode map tiles */
+.dark .leaflet-tile {
+  filter: brightness(0.8) invert(1) contrast(1.2) hue-rotate(190deg) saturate(0.4);
+}
+
+.dark .leaflet-container {
+  background-color: #121316;
+}

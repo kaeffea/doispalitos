@@ -1,0 +1,37 @@
+# ─── Arquivos de ambiente (NUNCA versionar) ───────────────────────────────────
+.env
+.env.*.local
+.env.local
+
+# ─── Dependências ────────────────────────────────────────────────────────────
+vendor/
+node_modules/
+
+# ─── Build / Cache ────────────────────────────────────────────────────────────
+backend/bootstrap/cache/*.php
+backend/storage/framework/cache/
+backend/storage/framework/sessions/
+backend/storage/framework/views/
+backend/storage/logs/
+frontend/*/dist/
+frontend/*/.next/
+frontend/*/.vite/
+*.tsbuildinfo
+mobile/.expo/
+mobile/dist/
+
+# ─── Sistema operacional ──────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── IDEs ─────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ─── Docker volumes locais ────────────────────────────────────────────────────
+docker/postgres/data/
+docker/redis/data/
+scratch/

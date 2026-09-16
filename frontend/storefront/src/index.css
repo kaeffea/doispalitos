@@ -1,0 +1,244 @@
+@import "tailwindcss";
+
+/* ─── Doispalitos Storefront — motor de temas via CSS variables ───
+   Todo bloco usa var(--sf-*) em vez de cor fixa. Trocar o preset
+   = trocar as variáveis = site irreconhecível com o mesmo código. */
+
+.sf-root {
+  --sf-bg: #f8f7f4;
+  --sf-surface: #ffffff;
+  --sf-surface-2: #f0efea;
+  --sf-text: #141416;
+  --sf-muted: #737377;
+  --sf-primary: #e5cb3c;
+  --sf-primary-text: #141416;
+  --sf-accent: #e5cb3c;
+  --sf-border: #e5e4dc;
+  --sf-radius: 14px;
+  --sf-border-w: 1px;
+  --sf-font-head: "Plus Jakarta Sans", sans-serif;
+  --sf-font-body: "Plus Jakarta Sans", sans-serif;
+  --sf-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --sf-spacing: 16px;
+
+  background: var(--sf-bg);
+  color: var(--sf-text);
+  font-family: var(--sf-font-body);
+  min-height: 100vh;
+}
+
+.sf-root * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sf-font-head {
+  font-family: var(--sf-font-head);
+}
+
+.sf-texture-paper {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.055) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.sf-texture-dots {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1.2px, transparent 1.2px);
+  background-size: 16px 16px;
+}
+
+.sf-texture-grid {
+  background-image:
+    linear-gradient(rgba(127, 127, 127, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(127, 127, 127, 0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.sf-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.sf-no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.sf-line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ─── Animações (controladas pelo Studio: none / subtle / playful) ─── */
+
+@keyframes sfFadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes sfPop {
+  0% { opacity: 0; transform: translateY(10px) scale(0.98); }
+  60% { opacity: 1; transform: translateY(-2px) scale(1.005); }
+  100% { opacity: 1; transform: none; }
+}
+
+.sf-motion-subtle .sf-anim {
+  animation: sfFadeUp 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.sf-motion-playful .sf-anim {
+  animation: sfPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.sf-motion-subtle .sf-pressable,
+.sf-motion-playful .sf-pressable {
+  transition: transform 0.15s ease;
+}
+
+.sf-motion-subtle .sf-pressable:active,
+.sf-motion-playful .sf-pressable:active {
+  transform: scale(0.96);
+}
+
+.sf-motion-subtle .sf-lift,
+.sf-motion-playful .sf-lift {
+  transition: transform 0.18s ease;
+}
+
+.sf-motion-subtle .sf-lift:hover {
+  transform: translateY(-2px);
+}
+
+.sf-motion-playful .sf-lift:hover {
+  transform: translateY(-3px) rotate(-0.3deg);
+}
+
+/* ─── Modo editável (o preview vira o canvas do Studio) ─── */
+
+.sf-editable {
+  position: relative;
+  border-radius: 8px;
+}
+
+.sf-editable:hover {
+  outline: 2px dashed var(--sf-accent);
+  outline-offset: 3px;
+}
+
+.sf-editable.sf-selected {
+  outline: 2px solid var(--sf-primary);
+  outline-offset: 3px;
+}
+
+.sf-toolbar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 40;
+  display: none;
+  gap: 2px;
+  background: rgba(10, 10, 12, 0.92);
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.sf-editable:hover > .sf-toolbar,
+.sf-editable.sf-selected > .sf-toolbar {
+  display: flex;
+}
+
+.sf-toolbar button {
+  color: #fff;
+  padding: 5px;
+  border-radius: 999px;
+  display: flex;
+  cursor: pointer;
+}
+
+.sf-toolbar button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.sf-toolbar button.danger:hover {
+  background: rgba(239, 68, 68, 0.45);
+}
+
+.sf-drop-target {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 3px;
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.sf-drop-before {
+  box-shadow: 0 -4px 0 0 #3b82f6;
+}
+
+.sf-drop-after {
+  box-shadow: 0 4px 0 0 #3b82f6;
+}
+
+.sf-drop-beside {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 3px;
+  background: rgba(59, 130, 246, 0.08);
+}
+
+/* texto editável no lugar: mostra o lápis no hover */
+
+.sf-canedit:hover {
+  background: rgba(127, 127, 127, 0.14);
+  border-radius: 4px;
+  cursor: text;
+  outline: 1px dashed currentColor;
+  outline-offset: 2px;
+}
+
+.sf-half-hint {
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  text-align: center;
+  color: var(--sf-muted);
+  padding: 6px 12px 2px;
+}
+
+/* selo "exemplo" dos fantasmas de prévia (bloco sem dado real) */
+
+.sf-ghost-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 40;
+  font-family: ui-monospace, monospace;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: #f59e0b;
+  color: #1a1005;
+  padding: 3px 8px;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+/* ─── Metades lado a lado (pensamento horizontal) ─── */
+
+.sf-half > section,
+.sf-half > div,
+.sf-half > nav,
+.sf-half > header,
+.sf-half > footer {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* ─── Preview desktop largo ─── */
+
+@media (min-width: 900px) {
+  .sf-wide .sf-products-2col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* demo shell (fora do storefront) */
+.demo-shell {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}

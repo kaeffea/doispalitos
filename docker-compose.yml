@@ -1,0 +1,155 @@
+services:
+  # ─── PHP-FPM ────────────────────────────────────────────────────────────────
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: doispalitos_app
+    restart: unless-stopped
+    working_dir: /var/www/backend
+    volumes:
+      - ./backend:/var/www/backend
+      - backend_vendor:/var/www/backend/vendor
+      - backend_storage:/var/www/backend/storage
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - doispalitos
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - PHP_OPCACHE_ENABLE=0  # desabilita em dev, habilita em prod
+
+  # ─── NGINX ──────────────────────────────────────────────────────────────────
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: doispalitos_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www/backend
+      - backend_storage:/var/www/backend/storage
+    networks:
+      - doispalitos
+    depends_on:
+      - app
+
+  # ─── POSTGRESQL ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: doispalitos_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-doispalitos}
+      POSTGRES_USER: ${DB_USERNAME:-doispalitos}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    networks:
+      - doispalitos
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-doispalitos} -d ${DB_DATABASE:-doispalitos}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ─── REDIS ──────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: doispalitos_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - doispalitos
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-secret}
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-secret}", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ─── MAILPIT (email local para dev) ─────────────────────────────────────────
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: doispalitos_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    networks:
+      - doispalitos
+
+  # ─── FRONTEND SUPERADMIN (Plataforma / Governança — React + Vite) ───────────
+  frontend-superadmin:
+    image: node:20-alpine
+    container_name: doispalitos_frontend_superadmin
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./frontend/superadmin:/app
+      - superadmin_node_modules:/app/node_modules
+    ports:
+      - "5174:5174"
+    networks:
+      - doispalitos
+    depends_on:
+      - nginx
+    command: sh -c "npm install && npm run dev"
+
+  # ─── FRONTEND RESTAURANT (Painel dos Restaurantes — React + Vite) ───────────
+  frontend-restaurant:
+    image: node:20-alpine
+    container_name: doispalitos_frontend_restaurant
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./frontend/restaurant:/app
+      - restaurant_node_modules:/app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - doispalitos
+    depends_on:
+      - nginx
+    command: sh -c "npm install && npm run dev"
+
+  # ─── FRONTEND STOREFRONT (Cardápio do Cliente — React + Vite) ───────────────
+  frontend-storefront:
+    image: node:20-alpine
+    container_name: doispalitos_frontend_storefront
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./frontend/storefront:/app
+      - storefront_node_modules:/app/node_modules
+    ports:
+      - "5175:5175"
+    networks:
+      - doispalitos
+    depends_on:
+      - nginx
+    command: sh -c "npm install && npm run dev"
+
+networks:
+  doispalitos:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  backend_vendor:
+  backend_storage:
+  superadmin_node_modules:
+  restaurant_node_modules:
+  storefront_node_modules:
